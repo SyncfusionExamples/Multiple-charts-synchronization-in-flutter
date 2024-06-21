@@ -30,7 +30,7 @@ SelectionBehavior _baseSelection =
     SelectionBehavior(enable: true, toggleSelection: false);
 SelectionBehavior _targetSelection =
     SelectionBehavior(enable: true, toggleSelection: false);
-int selectedIndex = -1;
+int _selectedIndex = -1;
 List<SalesData> _data = <SalesData>[
   SalesData('Jan', 21),
   SalesData('Feb', 24),
@@ -52,9 +52,9 @@ class FirstChart extends StatelessWidget {
         _isInteractive = true;
       },
       onSelectionChanged: (selectionArgs) {
-        if (_isInteractive && selectedIndex != selectionArgs.pointIndex) {
-          selectedIndex = selectionArgs.pointIndex;
-          _targetSelection.selectDataPoints(selectedIndex);
+        if (_isInteractive && _selectedIndex != selectionArgs.pointIndex) {
+          _selectedIndex = selectionArgs.pointIndex;
+          _targetSelection.selectDataPoints(_selectedIndex);
           _isInteractive = false;
         }
       },
@@ -85,9 +85,9 @@ class SecondChart extends StatelessWidget {
         _isInteractive = true;
       },
       onSelectionChanged: (selectionArgs) {
-        if (_isInteractive && selectedIndex != selectionArgs.pointIndex) {
-          selectedIndex = selectionArgs.pointIndex;
-          _baseSelection.selectDataPoints(selectedIndex);
+        if (_isInteractive && _selectedIndex != selectionArgs.pointIndex) {
+          _selectedIndex = selectionArgs.pointIndex;
+          _baseSelection.selectDataPoints(_selectedIndex);
           _isInteractive = false;
         }
       },
