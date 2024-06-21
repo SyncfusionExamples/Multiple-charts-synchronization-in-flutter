@@ -14,29 +14,7 @@ class SynchronizedZoomPan extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Synchronized ZoomPan',
-      home: MyHomePage(),
-    );
-  }
-}
-
-double zoomPosition = 0;
-double zoomFactor = 1;
-DateTimeAxisController? axisController1;
-DateTimeAxisController? axisController2;
-DataModel dataModel = DataModel();
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return const SafeArea(
-      child: Scaffold(
+      home: Scaffold(
         backgroundColor: Colors.white,
         body: Row(
           children: <Widget>[
@@ -49,16 +27,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class FirstChart extends StatefulWidget {
-  const FirstChart({super.key});
-  @override
-  State<StatefulWidget> createState() {
-    return FirstChartState();
-  }
-}
+DateTimeAxisController? _firstAxisController;
+DateTimeAxisController? _secondAxisController;
+DataModel _dataModel = DataModel();
 
-class FirstChartState extends State<FirstChart> {
-  FirstChartState({Key? key});
+class FirstChart extends StatelessWidget {
+  const FirstChart({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -71,36 +45,33 @@ class FirstChartState extends State<FirstChart> {
           zoomMode: ZoomMode.x),
       onZooming: (ZoomPanArgs args) {
         if (args.axis!.name == 'primaryXAxis') {
-          zoomPosition = args.currentZoomPosition;
-          zoomFactor = args.currentZoomFactor;
-          axisController2!.zoomFactor = zoomFactor;
-          axisController2!.zoomPosition = zoomPosition;
+          _secondAxisController!.zoomFactor = args.currentZoomFactor;
+          _secondAxisController!.zoomPosition = args.currentZoomPosition;
         }
       },
       primaryXAxis: DateTimeAxis(
-          minimum: DateTime(2023, 02, 18),
-          maximum: DateTime(2023, 08, 18),
-          dateFormat: DateFormat.MMMd(),
-          edgeLabelPlacement: EdgeLabelPlacement.shift,
-          majorGridLines: const MajorGridLines(width: 0),
-          onRendererCreated: (DateTimeAxisController controller) {
-            axisController1 = controller;
-          },
-          initialZoomFactor: zoomFactor,
-          initialZoomPosition: zoomPosition,
-          name: 'primaryXAxis'),
+        minimum: DateTime(2023, 02, 18),
+        maximum: DateTime(2023, 08, 18),
+        dateFormat: DateFormat.MMMd(),
+        edgeLabelPlacement: EdgeLabelPlacement.shift,
+        majorGridLines: const MajorGridLines(width: 0),
+        onRendererCreated: (DateTimeAxisController controller) {
+          _firstAxisController = controller;
+        },
+        initialZoomFactor: 1,
+        initialZoomPosition: 0,
+      ),
       primaryYAxis: const NumericAxis(
         minimum: 0.85,
         maximum: 1,
         interval: 0.025,
-        name: 'primaryYAxis',
       ),
       title: const ChartTitle(text: 'Chart 1'),
       series: <SplineSeries<SalesData, DateTime>>[
         SplineSeries<SalesData, DateTime>(
-          dataSource: dataModel.data,
-          xValueMapper: (SalesData sales, _) => sales.dateTime,
-          yValueMapper: (SalesData sales, _) => sales.y,
+          dataSource: _dataModel.data,
+          xValueMapper: (SalesData sales, int index) => sales.dateTime,
+          yValueMapper: (SalesData sales, int index) => sales.y,
           color: const Color.fromRGBO(99, 85, 199, 1),
         )
       ],
@@ -108,16 +79,8 @@ class FirstChartState extends State<FirstChart> {
   }
 }
 
-class SecondChart extends StatefulWidget {
+class SecondChart extends StatelessWidget {
   const SecondChart({super.key});
-  @override
-  State<StatefulWidget> createState() {
-    return SecondChartState();
-  }
-}
-
-class SecondChartState extends State<SecondChart> {
-  SecondChartState({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -130,24 +93,22 @@ class SecondChartState extends State<SecondChart> {
           zoomMode: ZoomMode.x),
       onZooming: (ZoomPanArgs args) {
         if (args.axis!.name == 'primaryXAxis') {
-          zoomPosition = args.currentZoomPosition;
-          zoomFactor = args.currentZoomFactor;
-          axisController1!.zoomFactor = zoomFactor;
-          axisController1!.zoomPosition = zoomPosition;
+          _firstAxisController!.zoomFactor = args.currentZoomFactor;
+          _firstAxisController!.zoomPosition = args.currentZoomPosition;
         }
       },
       primaryXAxis: DateTimeAxis(
-          minimum: DateTime(2023, 02, 18),
-          maximum: DateTime(2023, 08, 18),
-          dateFormat: DateFormat.MMMd(),
-          edgeLabelPlacement: EdgeLabelPlacement.shift,
-          majorGridLines: const MajorGridLines(width: 0),
-          onRendererCreated: (DateTimeAxisController controller) {
-            axisController2 = controller;
-          },
-          initialZoomFactor: zoomFactor,
-          initialZoomPosition: zoomPosition,
-          name: 'primaryXAxis'),
+        minimum: DateTime(2023, 02, 18),
+        maximum: DateTime(2023, 08, 18),
+        dateFormat: DateFormat.MMMd(),
+        edgeLabelPlacement: EdgeLabelPlacement.shift,
+        majorGridLines: const MajorGridLines(width: 0),
+        onRendererCreated: (DateTimeAxisController controller) {
+          _secondAxisController = controller;
+        },
+        initialZoomFactor: 1,
+        initialZoomPosition: 0,
+      ),
       primaryYAxis: const NumericAxis(
         minimum: 0.85,
         maximum: 1,
@@ -156,9 +117,9 @@ class SecondChartState extends State<SecondChart> {
       title: const ChartTitle(text: 'Chart 2'),
       series: <SplineSeries<SalesData, DateTime>>[
         SplineSeries<SalesData, DateTime>(
-          dataSource: dataModel.data,
-          xValueMapper: (SalesData sales, _) => sales.dateTime,
-          yValueMapper: (SalesData sales, _) => sales.y,
+          dataSource: _dataModel.data,
+          xValueMapper: (SalesData sales, int index) => sales.dateTime,
+          yValueMapper: (SalesData sales, int index) => sales.y,
           color: const Color.fromRGBO(99, 85, 199, 1),
         )
       ],

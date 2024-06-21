@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -8,26 +10,10 @@ class SynchronizedSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Synchronized Selection',
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return const SafeArea(
-      child: Scaffold(
+      home: Scaffold(
         backgroundColor: Colors.white,
         body: Row(
           children: <Widget>[
@@ -40,12 +26,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-SelectionBehavior selectionBehavior1 =
+SelectionBehavior _baseSelection =
     SelectionBehavior(enable: true, toggleSelection: false);
-SelectionBehavior selectionBehavior2 =
+SelectionBehavior _targetSelection =
     SelectionBehavior(enable: true, toggleSelection: false);
-int selectedIndex = -1;
-List<SalesData> data = <SalesData>[
+int _selectedIndex = -1;
+List<SalesData> _data = <SalesData>[
   SalesData('Jan', 21),
   SalesData('Feb', 24),
   SalesData('Mar', 35),
@@ -54,16 +40,9 @@ List<SalesData> data = <SalesData>[
   SalesData('Jun', 21),
 ];
 
-class FirstChart extends StatefulWidget {
-  const FirstChart({super.key});
+class FirstChart extends StatelessWidget {
+  FirstChart({super.key});
 
-  @override
-  State<StatefulWidget> createState() {
-    return FirstChartState();
-  }
-}
-
-class FirstChartState extends State<FirstChart> {
   bool _isInteractive = false;
 
   @override
@@ -73,9 +52,9 @@ class FirstChartState extends State<FirstChart> {
         _isInteractive = true;
       },
       onSelectionChanged: (selectionArgs) {
-        if (_isInteractive && selectedIndex != selectionArgs.pointIndex) {
-          selectedIndex = selectionArgs.pointIndex;
-          selectionBehavior2.selectDataPoints(selectedIndex);
+        if (_isInteractive && _selectedIndex != selectionArgs.pointIndex) {
+          _selectedIndex = selectionArgs.pointIndex;
+          _targetSelection.selectDataPoints(_selectedIndex);
           _isInteractive = false;
         }
       },
@@ -83,10 +62,10 @@ class FirstChartState extends State<FirstChart> {
       title: const ChartTitle(text: 'Chart 1'),
       series: <ColumnSeries<SalesData, String>>[
         ColumnSeries<SalesData, String>(
-          dataSource: data,
-          xValueMapper: (SalesData sales, _) => sales.year,
-          yValueMapper: (SalesData sales, _) => sales.sales,
-          selectionBehavior: selectionBehavior1,
+          dataSource: _data,
+          xValueMapper: (SalesData sales, int index) => sales.year,
+          yValueMapper: (SalesData sales, int index) => sales.sales,
+          selectionBehavior: _baseSelection,
           color: const Color.fromRGBO(99, 85, 199, 1),
         ),
       ],
@@ -94,16 +73,9 @@ class FirstChartState extends State<FirstChart> {
   }
 }
 
-class SecondChart extends StatefulWidget {
-  const SecondChart({super.key});
+class SecondChart extends StatelessWidget {
+  SecondChart({super.key});
 
-  @override
-  State<StatefulWidget> createState() {
-    return SecondChartState();
-  }
-}
-
-class SecondChartState extends State<SecondChart> {
   bool _isInteractive = false;
 
   @override
@@ -113,9 +85,9 @@ class SecondChartState extends State<SecondChart> {
         _isInteractive = true;
       },
       onSelectionChanged: (selectionArgs) {
-        if (_isInteractive && selectedIndex != selectionArgs.pointIndex) {
-          selectedIndex = selectionArgs.pointIndex;
-          selectionBehavior1.selectDataPoints(selectedIndex);
+        if (_isInteractive && _selectedIndex != selectionArgs.pointIndex) {
+          _selectedIndex = selectionArgs.pointIndex;
+          _baseSelection.selectDataPoints(_selectedIndex);
           _isInteractive = false;
         }
       },
@@ -123,10 +95,10 @@ class SecondChartState extends State<SecondChart> {
       title: const ChartTitle(text: 'Chart 2'),
       series: <ColumnSeries<SalesData, String>>[
         ColumnSeries<SalesData, String>(
-          dataSource: data,
+          dataSource: _data,
           xValueMapper: (SalesData sales, _) => sales.year,
           yValueMapper: (SalesData sales, _) => sales.sales,
-          selectionBehavior: selectionBehavior2,
+          selectionBehavior: _targetSelection,
           color: const Color.fromRGBO(99, 85, 199, 1),
         ),
       ],

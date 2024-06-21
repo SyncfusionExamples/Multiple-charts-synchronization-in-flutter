@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -11,26 +13,10 @@ class SynchronizedTrackball extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Synchronized Trackball',
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return const SafeArea(
-      child: Scaffold(
+      home: Scaffold(
         backgroundColor: Colors.white,
         body: Row(
           children: <Widget>[
@@ -43,26 +29,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-TrackballBehavior trackball1 =
+TrackballBehavior _baseTrackball =
     TrackballBehavior(enable: true, activationMode: ActivationMode.singleTap);
-TrackballBehavior trackball2 =
+TrackballBehavior _targetTrackball =
     TrackballBehavior(enable: true, activationMode: ActivationMode.singleTap);
-
-ChartSeriesController? _controller1;
-ChartSeriesController? _controller2;
-DataModel dataModel = DataModel();
+ChartSeriesController? _baseSeriesController;
+ChartSeriesController? _targetSeriesController;
+DataModel _dataModel = DataModel();
 Offset? _position;
 
-class FirstChart extends StatefulWidget {
-  const FirstChart({super.key});
+class FirstChart extends StatelessWidget {
+  FirstChart({super.key});
 
-  @override
-  State<StatefulWidget> createState() {
-    return FirstChartState();
-  }
-}
-
-class FirstChartState extends State<FirstChart> {
   bool _isInteractive = false;
 
   @override
@@ -73,14 +51,14 @@ class FirstChartState extends State<FirstChart> {
       },
       onChartTouchInteractionUp: (ChartTouchInteractionArgs tapArgs) {
         _isInteractive = false;
-        trackball2.hide();
+        _targetTrackball.hide();
       },
       onTrackballPositionChanging: (TrackballArgs trackballArgs) {
         if (_isInteractive) {
-          _position = _controller1!.pointToPixel(
+          _position = _baseSeriesController!.pointToPixel(
             trackballArgs.chartPointInfo.chartPoint!,
           );
-          trackball2.show(_position!.dx, _position!.dy, 'pixel');
+          _targetTrackball.show(_position!.dx, _position!.dy, 'pixel');
         }
       },
       primaryXAxis: DateTimeAxis(
@@ -96,15 +74,15 @@ class FirstChartState extends State<FirstChart> {
         interval: 0.025,
       ),
       title: const ChartTitle(text: 'Chart 1'),
-      trackballBehavior: trackball1,
+      trackballBehavior: _baseTrackball,
       series: <LineSeries<SalesData, DateTime>>[
         LineSeries<SalesData, DateTime>(
           color: const Color.fromRGBO(99, 85, 199, 1),
-          dataSource: dataModel.data,
+          dataSource: _dataModel.data,
           xValueMapper: (SalesData sales, int index) => sales.dateTime,
           yValueMapper: (SalesData sales, int index) => sales.y,
           onRendererCreated: (ChartSeriesController controller) {
-            _controller2 = controller;
+            _targetSeriesController = controller;
           },
         ),
       ],
@@ -112,16 +90,9 @@ class FirstChartState extends State<FirstChart> {
   }
 }
 
-class SecondChart extends StatefulWidget {
-  const SecondChart({super.key});
+class SecondChart extends StatelessWidget {
+  SecondChart({super.key});
 
-  @override
-  State<StatefulWidget> createState() {
-    return SecondChartState();
-  }
-}
-
-class SecondChartState extends State<SecondChart> {
   bool _isInteractive = false;
 
   @override
@@ -132,14 +103,14 @@ class SecondChartState extends State<SecondChart> {
       },
       onChartTouchInteractionUp: (ChartTouchInteractionArgs tapArgs) {
         _isInteractive = false;
-        trackball1.hide();
+        _baseTrackball.hide();
       },
       onTrackballPositionChanging: (TrackballArgs trackballArgs) {
         if (_isInteractive) {
-          _position = _controller2!.pointToPixel(
+          _position = _targetSeriesController!.pointToPixel(
             trackballArgs.chartPointInfo.chartPoint!,
           );
-          trackball1.show(_position!.dx, _position!.dy, 'pixel');
+          _baseTrackball.show(_position!.dx, _position!.dy, 'pixel');
         }
       },
       primaryXAxis: DateTimeAxis(
@@ -155,15 +126,15 @@ class SecondChartState extends State<SecondChart> {
         interval: 0.025,
       ),
       title: const ChartTitle(text: 'Chart 2'),
-      trackballBehavior: trackball2,
+      trackballBehavior: _targetTrackball,
       series: <LineSeries<SalesData, DateTime>>[
         LineSeries<SalesData, DateTime>(
           color: const Color.fromRGBO(99, 85, 199, 1),
-          dataSource: dataModel.data,
+          dataSource: _dataModel.data,
           xValueMapper: (SalesData sales, int index) => sales.dateTime,
           yValueMapper: (SalesData sales, int index) => sales.y,
           onRendererCreated: (ChartSeriesController controller) {
-            _controller1 = controller;
+            _baseSeriesController = controller;
           },
         ),
       ],
