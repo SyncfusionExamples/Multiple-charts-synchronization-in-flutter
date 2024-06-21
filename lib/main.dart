@@ -14,6 +14,8 @@ class MyApp extends StatelessWidget {
     'Selection',
   ];
 
+  MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,20 +31,19 @@ class MyApp extends StatelessWidget {
                 return ListTile(
                   title: Text(items[index]),
                   onTap: () {
-                    String title = 'Synchronized ${items[index]}';
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => Scaffold(
                           appBar: AppBar(
-                            title: Text('$title'),
+                            title: Text('Synchronized ${items[index]}'),
                           ),
                           body: Center(
                             child: index == 0
-                                ? SynchronizedTrackball()
+                                ? const SynchronizedTrackball()
                                 : index == 1
-                                    ? SynchronizedZoomPan()
-                                    : SynchronizedSelection(),
+                                    ? const SynchronizedZoomPan()
+                                    : const SynchronizedSelection(),
                           ),
                         ),
                       ),
