@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -11,7 +13,7 @@ class SynchronizedZoomPan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Synchronized ZoomPan',
       home: Scaffold(
@@ -32,17 +34,19 @@ DateTimeAxisController? _secondAxisController;
 DataModel _dataModel = DataModel();
 
 class FirstChart extends StatelessWidget {
-  const FirstChart({super.key});
+  FirstChart({super.key});
+
+  final ZoomPanBehavior _zoomPanBehavior = ZoomPanBehavior(
+      enablePanning: true,
+      enablePinching: true,
+      enableDoubleTapZooming: true,
+      zoomMode: ZoomMode.x);
 
   @override
   Widget build(BuildContext context) {
     return SfCartesianChart(
       backgroundColor: Colors.white,
-      zoomPanBehavior: ZoomPanBehavior(
-          enablePanning: true,
-          enablePinching: true,
-          enableDoubleTapZooming: true,
-          zoomMode: ZoomMode.x),
+      zoomPanBehavior: _zoomPanBehavior,
       onZooming: (ZoomPanArgs args) {
         if (args.axis!.name == 'primaryXAxis') {
           _secondAxisController!.zoomFactor = args.currentZoomFactor;
@@ -80,17 +84,19 @@ class FirstChart extends StatelessWidget {
 }
 
 class SecondChart extends StatelessWidget {
-  const SecondChart({super.key});
+  SecondChart({super.key});
+
+  final ZoomPanBehavior _zoomPanBehavior = ZoomPanBehavior(
+      enablePanning: true,
+      enablePinching: true,
+      enableDoubleTapZooming: true,
+      zoomMode: ZoomMode.x);
 
   @override
   Widget build(BuildContext context) {
     return SfCartesianChart(
       backgroundColor: Colors.white,
-      zoomPanBehavior: ZoomPanBehavior(
-          enablePanning: true,
-          enablePinching: true,
-          enableDoubleTapZooming: true,
-          zoomMode: ZoomMode.x),
+      zoomPanBehavior: _zoomPanBehavior,
       onZooming: (ZoomPanArgs args) {
         if (args.axis!.name == 'primaryXAxis') {
           _firstAxisController!.zoomFactor = args.currentZoomFactor;
