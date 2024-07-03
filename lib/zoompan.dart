@@ -47,8 +47,8 @@ class FirstChart extends StatelessWidget {
     return SfCartesianChart(
       backgroundColor: Colors.white,
       zoomPanBehavior: _zoomPanBehavior,
-      onZooming: (ZoomPanArgs args) => _updateZooming(args),
-      onZoomEnd: (ZoomPanArgs args) => _updateZooming(args),
+      onZooming: (ZoomPanArgs args) => _updateZoomFactorAndPosition(args),
+      onZoomEnd: (ZoomPanArgs args) => _updateZoomFactorAndPosition(args),
       primaryXAxis: DateTimeAxis(
         minimum: DateTime(2023, 02, 18),
         maximum: DateTime(2023, 08, 18),
@@ -78,7 +78,7 @@ class FirstChart extends StatelessWidget {
     );
   }
 
-  void _updateZooming(ZoomPanArgs args) {
+  void _updateZoomFactorAndPosition(ZoomPanArgs args) {
     if (args.axis!.name == 'primaryXAxis') {
       _secondAxisController!.zoomFactor = args.currentZoomFactor;
       _secondAxisController!.zoomPosition = args.currentZoomPosition;
