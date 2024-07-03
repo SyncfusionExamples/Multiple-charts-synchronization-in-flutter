@@ -47,12 +47,8 @@ class FirstChart extends StatelessWidget {
     return SfCartesianChart(
       backgroundColor: Colors.white,
       zoomPanBehavior: _zoomPanBehavior,
-      onZooming: (ZoomPanArgs args) {
-        if (args.axis!.name == 'primaryXAxis') {
-          _secondAxisController!.zoomFactor = args.currentZoomFactor;
-          _secondAxisController!.zoomPosition = args.currentZoomPosition;
-        }
-      },
+      onZooming: (ZoomPanArgs args) => _updateZoomFactorAndPosition(args),
+      onZoomEnd: (ZoomPanArgs args) => _updateZoomFactorAndPosition(args),
       primaryXAxis: DateTimeAxis(
         minimum: DateTime(2023, 02, 18),
         maximum: DateTime(2023, 08, 18),
@@ -81,6 +77,13 @@ class FirstChart extends StatelessWidget {
       ],
     );
   }
+
+  void _updateZoomFactorAndPosition(ZoomPanArgs args) {
+    if (args.axis!.name == 'primaryXAxis') {
+      _secondAxisController!.zoomFactor = args.currentZoomFactor;
+      _secondAxisController!.zoomPosition = args.currentZoomPosition;
+    }
+  }
 }
 
 class SecondChart extends StatelessWidget {
@@ -97,12 +100,8 @@ class SecondChart extends StatelessWidget {
     return SfCartesianChart(
       backgroundColor: Colors.white,
       zoomPanBehavior: _zoomPanBehavior,
-      onZooming: (ZoomPanArgs args) {
-        if (args.axis!.name == 'primaryXAxis') {
-          _firstAxisController!.zoomFactor = args.currentZoomFactor;
-          _firstAxisController!.zoomPosition = args.currentZoomPosition;
-        }
-      },
+      onZooming: (ZoomPanArgs args) => _updateZoomFactorAndPosition(args),
+      onZoomEnd: (ZoomPanArgs args) => _updateZoomFactorAndPosition(args),
       primaryXAxis: DateTimeAxis(
         minimum: DateTime(2023, 02, 18),
         maximum: DateTime(2023, 08, 18),
@@ -130,5 +129,12 @@ class SecondChart extends StatelessWidget {
         )
       ],
     );
+  }
+
+  void _updateZoomFactorAndPosition(ZoomPanArgs args) {
+    if (args.axis!.name == 'primaryXAxis') {
+      _firstAxisController!.zoomFactor = args.currentZoomFactor;
+      _firstAxisController!.zoomPosition = args.currentZoomPosition;
+    }
   }
 }
